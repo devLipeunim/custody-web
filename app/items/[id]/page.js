@@ -14,6 +14,76 @@ function offlineGap(deviceTime, serverTime) {
   return h > 0 ? `${h}h ${m}m later` : `${m}m later`;
 }
 
+/**
+ * The item's standing, stated up front.
+ *
+ * The chain is recomputed on every page load, so that half of this is always
+ * current. The file's standing is as at the last verification run, because
+ * rehashing a 30GB exhibit to paint a banner would make the page unusable.
+ * The wording keeps the difference visible rather than implying both were
+ * checked just now.
+ */
+function IntegrityBanner({ item, chain }) {
+  const last = item.last_verification;
+  const chainBroken = chain.chainIntegrity === "broken";
+
+  if (chainBroken) {
+    return (
+      <div className="banner altered">
+        <span className="headline">The handling record has been edited.</span>
+        <span className="detail">
+          The chain breaks at entry {chain.chainBreakAtSeq + 1}. Everything above it remains
+          verified.
+        </span>
+      </div>
+    );
+  }
+  if (last?.result === "altered") {
+    return (
+      <div className="banner altered">
+        <span className="headline">This file has been changed since collection.</span>
+        <span className="detail">As at {formatPlain(last.run_at)}. Verify again to confirm.</span>
+      </div>
+    );
+  }
+  if (last?.result === "missing") {
+    return (
+      <div className="banner altered">
+        <span className="headline">The exhibit is no longer in the evidence store.</span>
+        <span className="detail">As at {formatPlain(last.run_at)}.</span>
+      </div>
+    );
+  }
+  if (last?.result === "awaiting_file") {
+    return (
+      <div className="banner warn">
+        <span className="headline">Sealed in the field, exhibit not yet deposited.</span>
+        <span className="detail">
+          The fingerprint is recorded and the handling record is unbroken.
+        </span>
+      </div>
+    );
+  }
+  if (last?.result === "intact") {
+    return (
+      <div className="banner intact">
+        <span className="headline">Unchanged since collection.</span>
+        <span className="detail">
+          Checked {formatPlain(last.run_at)}. The handling record is unbroken.
+        </span>
+      </div>
+    );
+  }
+  return (
+    <div className="banner unknown">
+      <span className="headline">Not yet verified.</span>
+      <span className="detail">
+        The handling record is unbroken. Run a verification to check the file itself.
+      </span>
+    </div>
+  );
+}
+
 export default async function ItemDetail({ params }) {
   const { id } = await params;
   let item, chain;
@@ -32,6 +102,8 @@ export default async function ItemDetail({ params }) {
       </p>
       <h2>{item.reference}</h2>
       <p className="sub">{item.description}</p>
+
+      <IntegrityBanner item={item} chain={chain} />
 
       <div className="panel">
         <dl className="kv">
@@ -90,6 +162,9 @@ export default async function ItemDetail({ params }) {
               <li
                 key={e.id}
                 className={[e.linkBroken ? "broken" : "", isBreak ? "break-point" : ""].join(" ").trim()}
+                // Top to bottom, in the order the chain was written and the
+                // order a reader takes it in.
+                style={{ animationDelay: `${Math.min(e.seq * 60, 600)}ms` }}
               >
                 <span className="knot" />
                 <div className="event-head">

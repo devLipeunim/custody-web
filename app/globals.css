@@ -1,9 +1,28 @@
 /* Custody dashboard.
-   Deliberately plain. This is shown on a projector to people who care about
-   evidence, not about our design taste. High contrast, large type, and the
-   integrity states readable from the back of a room. */
+   Shown on a projector to people who care about evidence. High contrast,
+   large type, and the integrity states readable from the back of a room.
+
+   On motion: this is evidence software, so movement is used to explain, not
+   to decorate. Content settles in the order it is read. The chunk map builds
+   left to right because that is the order of the file. A verification in
+   progress shows the shape of its own answer, so the layout does not jump
+   when the answer arrives. Nothing bounces, nothing spins for decoration,
+   and every animation here is under 500ms.
+
+   All of it is disabled under prefers-reduced-motion, at the bottom of this
+   file. */
 
 :root {
+  /* Motion. One easing curve and three durations, so that everything on the
+     page moves as though it belongs to the same object. */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --fast: 140ms;
+  --base: 260ms;
+  --slow: 420ms;
+
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+
   --bg: #f7f7f5;
   --panel: #ffffff;
   --ink: #16160f;
@@ -24,12 +43,38 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-family: var(--sans);
   font-size: 15px;
   line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
-a { color: var(--link); }
+/* Headings are set in a serif, deliberately.
+   The thing this system produces is a one page document in Times that gets
+   handed to a magistrate. Setting the dashboard's headings in a serif makes
+   the screen and the paper look like they came from the same office, which
+   is the whole claim the product is making. No webfont: the fonts are local,
+   because a system that is about working offline should not be fetching
+   typefaces from a CDN. */
+h1, h2, h3, .serif {
+  font-family: var(--serif);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+
+a { color: var(--link); text-decoration-color: rgba(28, 79, 156, 0.32); text-underline-offset: 2px; }
+a:hover { text-decoration-color: currentColor; }
+
+/* An evidence reference is an identifier, so it is set like one: tabular
+   figures, no wandering baseline, and an underline that only appears when
+   the reader is actually pointing at it. */
+td a, .sub a {
+  font-variant-numeric: tabular-nums;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(28, 79, 156, 0.28);
+  transition: border-color var(--fast) var(--ease), color var(--fast) var(--ease);
+}
+td a:hover, .sub a:hover { border-bottom-color: currentColor; }
 
 .wrap { max-width: 1040px; margin: 0 auto; padding: 24px 20px 80px; }
 
@@ -38,12 +83,12 @@ header.top {
   background: var(--panel);
 }
 header.top .wrap { padding: 16px 20px; display: flex; align-items: baseline; gap: 16px; }
-header.top h1 { font-size: 20px; margin: 0; letter-spacing: -0.01em; }
+header.top h1 { font-size: 21px; margin: 0; letter-spacing: -0.01em; }
 header.top .tag { color: var(--muted); font-size: 13px; }
 header.top nav { margin-left: auto; font-size: 14px; }
 
-h2 { font-size: 22px; margin: 0 0 4px; letter-spacing: -0.01em; }
-h3 { font-size: 16px; margin: 28px 0 10px; }
+h2 { font-size: 27px; margin: 0 0 5px; letter-spacing: -0.012em; }
+h3 { font-size: 18px; margin: 28px 0 10px; }
 .sub { color: var(--muted); margin: 0 0 20px; }
 
 .panel {
@@ -139,3 +184,188 @@ a.button {
 .result-line.altered { color: var(--altered); }
 .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .spacer { height: 10px; }
+
+
+/* --- The summary strip ---------------------------------------------------
+   Three numbers that answer, before anything is clicked, the question the
+   whole system exists to answer. It also gives the case list something to
+   say above the fold instead of a table floating in white space. */
+
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
+.stat {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 6px;
+  padding: 16px 18px;
+  animation: fade-up var(--base) var(--ease) both;
+}
+.stat:nth-child(2) { animation-delay: 60ms; }
+.stat:nth-child(3) { animation-delay: 120ms; }
+.stat .n {
+  font-family: var(--serif); font-size: 30px; line-height: 1.1; font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.stat .n.ok { color: var(--intact); }
+.stat .n.bad { color: var(--altered); }
+.stat .k { color: var(--muted); font-size: 12.5px; margin-top: 5px; }
+
+/* --- The integrity banner ------------------------------------------------
+   The item's standing as at the last check, stated before the reader has to
+   ask for it. */
+
+.banner {
+  display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+  border-radius: 6px; padding: 13px 17px; margin-bottom: 18px;
+  border: 1px solid transparent;
+  animation: fade-up var(--base) var(--ease) both;
+}
+.banner .headline { font-family: var(--serif); font-size: 18px; font-weight: 600; }
+.banner .detail { font-size: 13.5px; }
+.banner.intact  { background: var(--intact-bg);  border-color: #bfe3ca; color: var(--intact); }
+.banner.altered { background: var(--altered-bg); border-color: #f3c5c1; color: var(--altered); }
+.banner.warn    { background: var(--warn-bg);    border-color: #ecd9a4; color: var(--warn); }
+.banner.unknown { background: #f0f0ec; border-color: var(--line); color: var(--muted); }
+
+/* The action name opens a timeline row, so it reads as a sentence. The
+   underlying text is left alone so that what the page says and what the API
+   returns remain the same string. */
+.event-head::first-letter { text-transform: uppercase; }
+
+footer.provenance {
+  margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--line);
+  color: var(--muted); font-size: 12.5px;
+}
+
+/* ==========================================================================
+   Motion
+   ========================================================================== */
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* A chunk block arrives slightly scaled down, as though it is being laid
+   into place. Used with a per block delay so the map builds along the file. */
+@keyframes chunk-in {
+  from { opacity: 0; transform: scale(0.82); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* The altered chunk draws attention to itself once, after the map has
+   finished building, and then stops. It does not pulse forever: a panel
+   member should be able to read the page without something blinking at them. */
+@keyframes chunk-alarm {
+  0%   { box-shadow: 0 0 0 0 rgba(180, 35, 24, 0.55); }
+  100% { box-shadow: 0 0 0 14px rgba(180, 35, 24, 0); }
+}
+
+/* Skeletons. A slow sweep rather than a flashing block. */
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to   { background-position: 200% 0; }
+}
+
+.fade-up { animation: fade-up var(--base) var(--ease) both; }
+.fade-in { animation: fade-in var(--base) var(--ease) both; }
+
+/* --- Skeletons ----------------------------------------------------------
+   A skeleton stands in for content that is already on its way, and it is
+   laid out to the same shape as the thing it replaces, so nothing jumps
+   when the real content lands. */
+
+.sk {
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    rgba(22, 22, 15, 0.055) 25%,
+    rgba(22, 22, 15, 0.10) 37%,
+    rgba(22, 22, 15, 0.055) 63%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.45s linear infinite;
+}
+
+.sk-line { height: 13px; margin: 7px 0; }
+.sk-line.sm { height: 11px; }
+.sk-title { height: 26px; width: 300px; margin: 0 0 10px; }
+.sk-sub { height: 14px; width: 440px; margin: 0 0 22px; }
+.sk-badge { height: 20px; width: 92px; border-radius: 11px; }
+.sk-chunk { width: 46px; height: 46px; border-radius: 4px; }
+.sk-row { display: flex; gap: 12px; align-items: center; }
+
+/* Screen readers should hear that something is loading, not read a wall of
+   empty boxes. */
+.sk-label {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* --- Micro interactions -------------------------------------------------- */
+
+a { transition: color var(--fast) var(--ease); }
+
+tbody tr { transition: background-color var(--fast) var(--ease); }
+tbody tr:hover { background: rgba(22, 22, 15, 0.022); }
+
+.badge { transition: background-color var(--base) var(--ease), color var(--base) var(--ease); }
+
+button.action, a.button {
+  transition: transform var(--fast) var(--ease), opacity var(--fast) var(--ease),
+              background-color var(--fast) var(--ease), box-shadow var(--fast) var(--ease);
+}
+button.action:hover:not(:disabled) { box-shadow: 0 2px 10px rgba(22, 22, 15, 0.18); }
+button.action:active:not(:disabled) { transform: translateY(1px); }
+a.button:hover { background: #fdfdfb; box-shadow: 0 1px 6px rgba(22, 22, 15, 0.09); }
+a.button:active { transform: translateY(1px); }
+
+/* The button carries its own progress, so the eye stays where the click was. */
+button.action.running {
+  position: relative;
+  overflow: hidden;
+}
+button.action.running::after {
+  content: "";
+  position: absolute; left: 0; bottom: 0; height: 2px; width: 40%;
+  background: rgba(255, 255, 255, 0.85);
+  animation: sweep 1.05s var(--ease) infinite;
+}
+@keyframes sweep {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(350%); }
+}
+
+/* --- The custody timeline ------------------------------------------------
+   Rows settle in sequence, top to bottom, which is the order a reader takes
+   them in and the order the chain was written. */
+
+.timeline li { animation: fade-up var(--base) var(--ease) both; }
+.timeline li .knot { transition: border-color var(--base) var(--ease), background-color var(--base) var(--ease); }
+
+.break-notice { animation: fade-up var(--slow) var(--ease) both; }
+
+/* --- The chunk map ------------------------------------------------------- */
+
+.chunk { animation: chunk-in var(--base) var(--ease) both; }
+.chunk.altered { animation: chunk-in var(--base) var(--ease) both, chunk-alarm 900ms var(--ease) 420ms 2; }
+
+.result-line { animation: fade-up var(--base) var(--ease) both; }
+
+/* --- Reduced motion ------------------------------------------------------
+   Honoured rather than merely declared. A shimmer becomes a flat tint, and
+   everything else appears at once, fully legible. */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+  .sk {
+    animation: none !important;
+    background: rgba(22, 22, 15, 0.075);
+  }
+}

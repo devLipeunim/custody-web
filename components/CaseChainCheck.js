@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Loading, Line } from "./Skeleton";
 
 const API = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:4000";
 
@@ -29,13 +30,26 @@ export default function CaseChainCheck({ caseRef }) {
   return (
     <div className="panel">
       <div className="row">
-        <button className="action" onClick={run} disabled={state.status === "running"}>
-          {state.status === "running" ? "Checking…" : "Check the case record"}
+        <button
+          className={`action${state.status === "running" ? " running" : ""}`}
+          onClick={run}
+          disabled={state.status === "running"}
+        >
+          {state.status === "running" ? "Checking" : "Check the case record"}
         </button>
         <span className="event-meta">
           Confirms that no evidence item has been removed from this case.
         </span>
       </div>
+
+      {state.status === "running" && (
+        <div style={{ marginTop: 16 }}>
+          <Loading label="Checking the case record">
+            <Line width="330px" height={19} />
+            <Line width="62%" height={12} />
+          </Loading>
+        </div>
+      )}
 
       {state.status === "error" && (
         <p className="result-line altered" style={{ marginTop: 14 }}>{state.error}</p>
