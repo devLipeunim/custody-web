@@ -1,0 +1,141 @@
+/* Custody dashboard.
+   Deliberately plain. This is shown on a projector to people who care about
+   evidence, not about our design taste. High contrast, large type, and the
+   integrity states readable from the back of a room. */
+
+:root {
+  --bg: #f7f7f5;
+  --panel: #ffffff;
+  --ink: #16160f;
+  --muted: #6b6b60;
+  --line: #d8d8d0;
+  --intact: #1a7f37;
+  --intact-bg: #e8f5ec;
+  --altered: #b42318;
+  --altered-bg: #fdeceb;
+  --warn: #9a6700;
+  --warn-bg: #fdf6e3;
+  --link: #1c4f9c;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+a { color: var(--link); }
+
+.wrap { max-width: 1040px; margin: 0 auto; padding: 24px 20px 80px; }
+
+header.top {
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+}
+header.top .wrap { padding: 16px 20px; display: flex; align-items: baseline; gap: 16px; }
+header.top h1 { font-size: 20px; margin: 0; letter-spacing: -0.01em; }
+header.top .tag { color: var(--muted); font-size: 13px; }
+header.top nav { margin-left: auto; font-size: 14px; }
+
+h2 { font-size: 22px; margin: 0 0 4px; letter-spacing: -0.01em; }
+h3 { font-size: 16px; margin: 28px 0 10px; }
+.sub { color: var(--muted); margin: 0 0 20px; }
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 18px 20px;
+  margin-bottom: 18px;
+}
+
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); font-weight: 600; }
+tbody tr:last-child td { border-bottom: none; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.badge {
+  display: inline-block; padding: 2px 9px; border-radius: 11px;
+  font-size: 12px; font-weight: 600; white-space: nowrap;
+}
+.badge.intact  { background: var(--intact-bg);  color: var(--intact); }
+.badge.altered { background: var(--altered-bg); color: var(--altered); }
+.badge.unknown { background: #eee; color: var(--muted); }
+.badge.warn    { background: var(--warn-bg);    color: var(--warn); }
+
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; }
+
+button.action {
+  font: inherit; font-weight: 600; padding: 9px 18px;
+  background: var(--ink); color: #fff; border: none; border-radius: 5px; cursor: pointer;
+}
+button.action:disabled { opacity: 0.55; cursor: default; }
+a.button {
+  display: inline-block; font-weight: 600; padding: 9px 18px; text-decoration: none;
+  border: 1px solid var(--line); border-radius: 5px; background: var(--panel); color: var(--ink);
+}
+
+/* --- The custody timeline ------------------------------------------------
+   One row per event. The link between rows is drawn as a real line, so a
+   break is a visibly severed line rather than a red word. */
+
+.timeline { list-style: none; margin: 0; padding: 0; }
+.timeline li { position: relative; padding: 0 0 6px 34px; }
+.timeline li::before {
+  content: ""; position: absolute; left: 9px; top: 20px; bottom: -6px;
+  width: 2px; background: var(--intact);
+}
+.timeline li:last-child::before { display: none; }
+.timeline li .knot {
+  position: absolute; left: 4px; top: 8px;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--panel); border: 2px solid var(--intact);
+}
+.timeline li.broken::before { background: var(--altered); }
+.timeline li.broken .knot { border-color: var(--altered); background: var(--altered-bg); }
+
+/* The severed link: a dashed gap with a break notice sitting in it. */
+.timeline li.break-point::before {
+  background: repeating-linear-gradient(
+    to bottom, var(--altered) 0 4px, transparent 4px 9px
+  );
+}
+.break-notice {
+  margin: 8px 0 12px; padding: 10px 12px;
+  background: var(--altered-bg); border-left: 3px solid var(--altered);
+  border-radius: 0 4px 4px 0; color: var(--altered); font-size: 13.5px;
+}
+.event-head { font-weight: 600; }
+.event-meta { color: var(--muted); font-size: 13px; }
+.event-note { font-size: 13.5px; margin-top: 2px; }
+
+/* --- The chunk map -------------------------------------------------------
+   A row of blocks, green for matching and red for altered, so the change is
+   visible at a glance from across a room. */
+
+.chunkmap { display: flex; flex-wrap: wrap; gap: 5px; margin: 10px 0 8px; }
+.chunk {
+  width: 46px; height: 46px; border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums;
+  border: 1px solid transparent;
+}
+.chunk.ok      { background: var(--intact-bg);  color: var(--intact);  border-color: #bfe3ca; }
+.chunk.altered { background: var(--altered);    color: #fff; }
+.chunk-legend { color: var(--muted); font-size: 13px; }
+
+.kv { display: grid; grid-template-columns: 210px 1fr; gap: 4px 16px; font-size: 14px; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; }
+
+.result-line { font-size: 19px; font-weight: 600; margin: 0 0 6px; }
+.result-line.intact  { color: var(--intact); }
+.result-line.altered { color: var(--altered); }
+.row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.spacer { height: 10px; }
