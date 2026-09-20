@@ -159,4 +159,9 @@ Suspense boundary around them, so the shell streams before the data arrives and 
 is already sent by the time `notFound()` runs. The page still renders "No such record".
 Removing `app/**/loading.tsx` restores the `404` and loses the skeletons.
 
+**Dependency advisories.** `npm audit` reports Next.js advisories that remain open across the
+15.x range, concerning denial of service and cache poisoning in self hosted deployments. The
+dashboard serves synthetic data over a local network and clearing them requires a major version
+upgrade, so they are recorded rather than acted on.
+
 All data displayed is synthetic. See the backend README for provenance.
