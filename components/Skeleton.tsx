@@ -1,17 +1,16 @@
-// Skeletons.
-//
-// Each one is laid out to the same shape as the content it stands in for, so
-// that when the real thing arrives nothing on the page moves. A spinner in
-// the middle of an empty panel tells the reader only that they are waiting.
-// A skeleton tells them what they are waiting for, and how much of it there
-// is, which on a case with eleven items is worth knowing.
+import type { ReactNode } from "react";
 
-export function Line({ width = "100%", height, className = "" }) {
+interface LineProps {
+  width?: string | number;
+  height?: number;
+  className?: string;
+}
+
+export function Line({ width = "100%", height, className = "" }: LineProps) {
   return <div className={`sk sk-line ${className}`} style={{ width, height }} />;
 }
 
-/** Wraps a loading region so a screen reader announces it once. */
-export function Loading({ label, children }) {
+export function Loading({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div role="status" aria-busy="true" aria-live="polite">
       <span className="sk-label">{label}</span>
@@ -20,7 +19,7 @@ export function Loading({ label, children }) {
   );
 }
 
-export function TableSkeleton({ columns, rows = 4 }) {
+export function TableSkeleton({ columns, rows = 4 }: { columns: string[]; rows?: number }) {
   return (
     <div className="panel" style={{ padding: 0 }}>
       <table>
@@ -29,8 +28,6 @@ export function TableSkeleton({ columns, rows = 4 }) {
         </thead>
         <tbody>
           {Array.from({ length: rows }, (_, r) => (
-            // Each row fades in a beat after the one above it, so the table
-            // fills the way a list is read rather than all at once.
             <tr key={r} className="fade-in" style={{ animationDelay: `${r * 55}ms` }}>
               {columns.map((c, i) => (
                 <td key={c}>
@@ -45,7 +42,7 @@ export function TableSkeleton({ columns, rows = 4 }) {
   );
 }
 
-export function PageHeadingSkeleton({ subWidth = "440px" }) {
+export function PageHeadingSkeleton({ subWidth = "440px" }: { subWidth?: string }) {
   return (
     <>
       <div className="sk sk-title" />
@@ -54,8 +51,7 @@ export function PageHeadingSkeleton({ subWidth = "440px" }) {
   );
 }
 
-/** The item detail's fact panel: a two column definition list. */
-export function FactsSkeleton({ rows = 6 }) {
+export function FactsSkeleton({ rows = 6 }: { rows?: number }) {
   return (
     <div className="panel">
       <dl className="kv">
@@ -71,15 +67,10 @@ export function FactsSkeleton({ rows = 6 }) {
 }
 
 /**
- * The verification result, while it is being computed.
- *
- * This one matters more than the others. Verification rehashes the file from
- * disk, which on a large item takes long enough to notice, and the reader is
- * waiting on an answer that might be bad news. Showing the shape of the
- * answer, including the row of chunks, means the result lands in place
- * instead of shoving the page around at the moment it is being read.
+ * Placeholder for a verification in progress, including the chunk row, so the
+ * result lands in place rather than displacing content as it is being read.
  */
-export function VerifyResultSkeleton({ chunkCount = 8 }) {
+export function VerifyResultSkeleton({ chunkCount = 8 }: { chunkCount?: number }) {
   return (
     <Loading label="Recomputing the fingerprint and the custody chain">
       <div style={{ marginTop: 18 }}>
@@ -98,7 +89,7 @@ export function VerifyResultSkeleton({ chunkCount = 8 }) {
   );
 }
 
-export function TimelineSkeleton({ rows = 4 }) {
+export function TimelineSkeleton({ rows = 4 }: { rows?: number }) {
   return (
     <div className="panel">
       <ul className="timeline">

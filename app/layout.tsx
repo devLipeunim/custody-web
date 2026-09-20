@@ -1,11 +1,13 @@
+import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import "./globals.css";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Custody",
   description: "Proving digital evidence has not been changed",
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>

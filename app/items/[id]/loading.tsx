@@ -1,4 +1,6 @@
-import { Loading, PageHeadingSkeleton, FactsSkeleton, TimelineSkeleton, Line } from "@/components/Skeleton";
+import {
+  Loading, PageHeadingSkeleton, FactsSkeleton, TimelineSkeleton, Line,
+} from "@/components/Skeleton";
 
 export default function LoadingItem() {
   return (

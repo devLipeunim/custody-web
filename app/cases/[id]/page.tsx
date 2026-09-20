@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { api, FORUM_LABELS, formatPlain, formatSize } from "@/lib/api";
+import { api, FORUM_LABELS, formatPlain, formatSize, NotFoundError } from "@/lib/api";
 import CaseChainCheck from "@/components/CaseChainCheck";
+import type { CaseDetail, CaseItemRow } from "@/types/api";
 
 export const dynamic = "force-dynamic";
 
-function ItemBadge({ item }) {
+function ItemBadge({ item }: { item: CaseItemRow }) {
   if (!item.last_result) return <span className="badge unknown">Not yet verified</span>;
   if (item.last_result === "altered") return <span className="badge altered">Altered</span>;
   if (item.last_result === "awaiting_file") return <span className="badge warn">Awaiting exhibit</span>;
@@ -14,13 +15,14 @@ function ItemBadge({ item }) {
   return <span className="badge intact">Intact</span>;
 }
 
-export default async function CaseDetail({ params }) {
+export default async function CaseDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  let kase;
+
+  let kase: CaseDetail;
   try {
-    kase = await api(`/api/cases/${id}`);
+    kase = await api<CaseDetail>(`/api/cases/${id}`);
   } catch (err) {
-    if (err.notFound) notFound();
+    if (err instanceof NotFoundError) notFound();
     throw err;
   }
 
@@ -57,7 +59,9 @@ export default async function CaseDetail({ params }) {
                 </td>
                 <td className="num">
                   {formatSize(i.file_size_bytes)}
-                  <div className="event-meta">{i.chunk_count} chunk{i.chunk_count === 1 ? "" : "s"}</div>
+                  <div className="event-meta">
+                    {i.chunk_count} chunk{i.chunk_count === 1 ? "" : "s"}
+                  </div>
                 </td>
                 <td className="num">{formatPlain(i.collected_at)}</td>
                 <td className="num">{i.event_count}</td>

@@ -1,20 +1,11 @@
 /* Custody dashboard.
-   Shown on a projector to people who care about evidence. High contrast,
-   large type, and the integrity states readable from the back of a room.
-
-   On motion: this is evidence software, so movement is used to explain, not
-   to decorate. Content settles in the order it is read. The chunk map builds
-   left to right because that is the order of the file. A verification in
-   progress shows the shape of its own answer, so the layout does not jump
-   when the answer arrives. Nothing bounces, nothing spins for decoration,
-   and every animation here is under 500ms.
-
-   All of it is disabled under prefers-reduced-motion, at the bottom of this
+   High contrast and large type: integrity states must be legible at a
+   distance. Motion is used to explain rather than to decorate, is under 500ms
+   throughout, and is disabled under prefers-reduced-motion at the end of this
    file. */
 
 :root {
-  /* Motion. One easing curve and three durations, so that everything on the
-     page moves as though it belongs to the same object. */
+  /* One easing curve and three durations across the whole page. */
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --fast: 140ms;
   --base: 260ms;
@@ -49,13 +40,8 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Headings are set in a serif, deliberately.
-   The thing this system produces is a one page document in Times that gets
-   handed to a magistrate. Setting the dashboard's headings in a serif makes
-   the screen and the paper look like they came from the same office, which
-   is the whole claim the product is making. No webfont: the fonts are local,
-   because a system that is about working offline should not be fetching
-   typefaces from a CDN. */
+/* Serif headings, echoing the typeface of the report this system produces.
+   Local fonts only: an offline first system should not fetch typefaces. */
 h1, h2, h3, .serif {
   font-family: var(--serif);
   font-weight: 600;
@@ -65,9 +51,7 @@ h1, h2, h3, .serif {
 a { color: var(--link); text-decoration-color: rgba(28, 79, 156, 0.32); text-underline-offset: 2px; }
 a:hover { text-decoration-color: currentColor; }
 
-/* An evidence reference is an identifier, so it is set like one: tabular
-   figures, no wandering baseline, and an underline that only appears when
-   the reader is actually pointing at it. */
+/* References are identifiers: tabular figures, underline on hover only. */
 td a, .sub a {
   font-variant-numeric: tabular-nums;
   text-decoration: none;
@@ -127,8 +111,8 @@ a.button {
 }
 
 /* --- The custody timeline ------------------------------------------------
-   One row per event. The link between rows is drawn as a real line, so a
-   break is a visibly severed line rather than a red word. */
+   The link between rows is drawn as a line, so a break renders as a severed
+   line at the exact point it occurs. */
 
 .timeline { list-style: none; margin: 0; padding: 0; }
 .timeline li { position: relative; padding: 0 0 6px 34px; }
@@ -161,8 +145,7 @@ a.button {
 .event-note { font-size: 13.5px; margin-top: 2px; }
 
 /* --- The chunk map -------------------------------------------------------
-   A row of blocks, green for matching and red for altered, so the change is
-   visible at a glance from across a room. */
+   One block per chunk, green for matching and red for altered. */
 
 .chunkmap { display: flex; flex-wrap: wrap; gap: 5px; margin: 10px 0 8px; }
 .chunk {
@@ -186,10 +169,7 @@ a.button {
 .spacer { height: 10px; }
 
 
-/* --- The summary strip ---------------------------------------------------
-   Three numbers that answer, before anything is clicked, the question the
-   whole system exists to answer. It also gives the case list something to
-   say above the fold instead of a table floating in white space. */
+/* --- The summary strip --------------------------------------------------- */
 
 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
 .stat {
@@ -208,8 +188,7 @@ a.button {
 .stat .k { color: var(--muted); font-size: 12.5px; margin-top: 5px; }
 
 /* --- The integrity banner ------------------------------------------------
-   The item's standing as at the last check, stated before the reader has to
-   ask for it. */
+   The item's standing as at the last check. */
 
 .banner {
   display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
@@ -224,9 +203,8 @@ a.button {
 .banner.warn    { background: var(--warn-bg);    border-color: #ecd9a4; color: var(--warn); }
 .banner.unknown { background: #f0f0ec; border-color: var(--line); color: var(--muted); }
 
-/* The action name opens a timeline row, so it reads as a sentence. The
-   underlying text is left alone so that what the page says and what the API
-   returns remain the same string. */
+/* Capitalised in presentation only, so the rendered text and the API value
+   remain the same string. */
 .event-head::first-letter { text-transform: uppercase; }
 
 footer.provenance {
@@ -248,22 +226,19 @@ footer.provenance {
   to   { opacity: 1; }
 }
 
-/* A chunk block arrives slightly scaled down, as though it is being laid
-   into place. Used with a per block delay so the map builds along the file. */
+/* Used with a per block delay, so the map builds in file order. */
 @keyframes chunk-in {
   from { opacity: 0; transform: scale(0.82); }
   to   { opacity: 1; transform: none; }
 }
 
-/* The altered chunk draws attention to itself once, after the map has
-   finished building, and then stops. It does not pulse forever: a panel
-   member should be able to read the page without something blinking at them. */
+/* Runs twice after the map has built, then stops. */
 @keyframes chunk-alarm {
   0%   { box-shadow: 0 0 0 0 rgba(180, 35, 24, 0.55); }
   100% { box-shadow: 0 0 0 14px rgba(180, 35, 24, 0); }
 }
 
-/* Skeletons. A slow sweep rather than a flashing block. */
+/* Skeleton sweep. */
 @keyframes shimmer {
   from { background-position: -200% 0; }
   to   { background-position: 200% 0; }
@@ -273,9 +248,8 @@ footer.provenance {
 .fade-in { animation: fade-in var(--base) var(--ease) both; }
 
 /* --- Skeletons ----------------------------------------------------------
-   A skeleton stands in for content that is already on its way, and it is
-   laid out to the same shape as the thing it replaces, so nothing jumps
-   when the real content lands. */
+   Laid out to the shape of the content they replace, so nothing shifts when
+   the real content lands. */
 
 .sk {
   border-radius: 4px;
@@ -297,8 +271,7 @@ footer.provenance {
 .sk-chunk { width: 46px; height: 46px; border-radius: 4px; }
 .sk-row { display: flex; gap: 12px; align-items: center; }
 
-/* Screen readers should hear that something is loading, not read a wall of
-   empty boxes. */
+/* Announced to assistive technology instead of the empty blocks. */
 .sk-label {
   position: absolute; width: 1px; height: 1px; overflow: hidden;
   clip: rect(0 0 0 0); white-space: nowrap;
@@ -322,7 +295,7 @@ button.action:active:not(:disabled) { transform: translateY(1px); }
 a.button:hover { background: #fdfdfb; box-shadow: 0 1px 6px rgba(22, 22, 15, 0.09); }
 a.button:active { transform: translateY(1px); }
 
-/* The button carries its own progress, so the eye stays where the click was. */
+/* Progress is shown on the control that was activated. */
 button.action.running {
   position: relative;
   overflow: hidden;
@@ -339,8 +312,7 @@ button.action.running::after {
 }
 
 /* --- The custody timeline ------------------------------------------------
-   Rows settle in sequence, top to bottom, which is the order a reader takes
-   them in and the order the chain was written. */
+   Rows settle top to bottom, in the order the chain was written. */
 
 .timeline li { animation: fade-up var(--base) var(--ease) both; }
 .timeline li .knot { transition: border-color var(--base) var(--ease), background-color var(--base) var(--ease); }
@@ -355,8 +327,7 @@ button.action.running::after {
 .result-line { animation: fade-up var(--base) var(--ease) both; }
 
 /* --- Reduced motion ------------------------------------------------------
-   Honoured rather than merely declared. A shimmer becomes a flat tint, and
-   everything else appears at once, fully legible. */
+   Shimmer becomes a flat tint; everything else appears at once. */
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
