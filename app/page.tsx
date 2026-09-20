@@ -28,9 +28,11 @@ export default async function CaseList() {
   if (error) {
     return (
       <div className="panel">
-        <h2>The API is not reachable</h2>
-        <p className="sub">Start the backend, then reload this page.</p>
-        <pre className="mono">cd hackathonBackend &amp;&amp; npm run dev</pre>
+        <h2>The record is temporarily unavailable</h2>
+        <p className="sub">
+          The evidence service did not respond. It sleeps when idle and can take up to a minute
+          to wake, so reloading shortly usually restores the page.
+        </p>
         <p className="mono" style={{ color: "var(--muted)" }}>{error}</p>
       </div>
     );
@@ -102,7 +104,10 @@ export default async function CaseList() {
       </div>
 
       {cases.length === 0 && (
-        <p className="sub">No cases yet. Run the seeder in the backend.</p>
+        <p className="sub">
+          No cases have been opened yet. Evidence appears here once an officer collects it in the
+          field and the device syncs.
+        </p>
       )}
 
       <footer className="provenance">
