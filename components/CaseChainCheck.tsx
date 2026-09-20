@@ -12,11 +12,6 @@ type State =
   | { status: "done"; data: CaseVerifyResult }
   | { status: "error"; error: string };
 
-/**
- * Verifies the case level chain, which is what detects an item removed from
- * the case entirely. The item's own chain disappears with it, so only the
- * case chain can show that something recorded is no longer present.
- */
 export default function CaseChainCheck({ caseRef }: { caseRef: string }) {
   const [state, setState] = useState<State>({ status: "idle" });
 

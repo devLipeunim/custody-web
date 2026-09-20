@@ -1,5 +1,3 @@
-/** Response types for the Custody API. Mirrors hackathonBackend/src. */
-
 export type Forum = "disciplinary_panel" | "fraud_investigation" | "criminal";
 
 export type CustodyAction =
@@ -116,7 +114,6 @@ export interface ChainEvent {
   eventHash: string;
   correctsEvent: string | null;
   correctsSeq: number | null;
-  /** True at the break and for every event after it. */
   linkBroken: boolean;
 }
 

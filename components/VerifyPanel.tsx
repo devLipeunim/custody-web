@@ -32,15 +32,12 @@ export default function VerifyPanel({ itemRef, chunkCount, chunkSizeBytes, fileS
     try {
       const res = await fetch(`${API}/api/items/${itemRef}/verify`, { cache: "no-store" });
       setState({ status: "done", data: (await res.json()) as VerifyResult });
-      // The banner above is rendered from the last recorded verification,
-      // which this run has just replaced.
       router.refresh();
     } catch (err) {
       setState({ status: "error", error: err instanceof Error ? err.message : String(err) });
     }
   }
 
-  // `?verify=1` runs the check on arrival, so a result can be shared as a URL.
   useEffect(() => {
     if (started.current || typeof window === "undefined") return;
     if (new URLSearchParams(window.location.search).get("verify") !== "1") return;
@@ -78,8 +75,6 @@ export default function VerifyPanel({ itemRef, chunkCount, chunkSizeBytes, fileS
 
       {state.status === "done" && (
         <div style={{ marginTop: 18 }}>
-          {/* File integrity and chain integrity are reported separately: they
-              fail for different reasons and carry different consequences. */}
           <h3 style={{ marginTop: 0 }} className="fade-up">Is the file unchanged?</h3>
 
           {state.data.fileIntegrity === "intact" && (
@@ -134,8 +129,6 @@ export default function VerifyPanel({ itemRef, chunkCount, chunkSizeBytes, fileS
                       (altered.has(i) ? " (altered)" : " (matches)")
                     }
                   >
-                    {/* Numbered from one, to agree with the sentence above and
-                        with the report. The API indexes from zero. */}
                     {i + 1}
                   </div>
                 ))}

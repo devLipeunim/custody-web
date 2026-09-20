@@ -8,14 +8,6 @@ import type { ChainResponse, ItemDetail } from "@/types/api";
 
 export const dynamic = "force-dynamic";
 
-/**
- * The item's standing, stated before the reader has to ask for it.
- *
- * The chain is recomputed on every page load, so that half is always current.
- * The file's standing is as at the last verification run, because rehashing a
- * large exhibit to paint a banner would make the page unusable. The wording
- * keeps that difference visible.
- */
 function IntegrityBanner({ item, chain }: { item: ItemDetail; chain: ChainResponse }) {
   if (chain.chainIntegrity === "broken") {
     return (
@@ -107,8 +99,6 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ id:
           <dt>File</dt>
           <dd>
             {item.file_name} · {formatSize(item.file_size_bytes)}
-            {/* The exact count is redundant when the rounded size is already
-                given in bytes. */}
             {item.file_size_bytes >= 1024 && ` (${formatNumber(item.file_size_bytes)} bytes)`}
           </dd>
           <dt>Fingerprinted as</dt>

@@ -1,11 +1,4 @@
-/* Custody dashboard.
-   High contrast and large type: integrity states must be legible at a
-   distance. Motion is used to explain rather than to decorate, is under 500ms
-   throughout, and is disabled under prefers-reduced-motion at the end of this
-   file. */
-
 :root {
-  /* One easing curve and three durations across the whole page. */
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --fast: 140ms;
   --base: 260ms;
@@ -40,8 +33,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Serif headings, echoing the typeface of the report this system produces.
-   Local fonts only: an offline first system should not fetch typefaces. */
 h1, h2, h3, .serif {
   font-family: var(--serif);
   font-weight: 600;
@@ -51,7 +42,6 @@ h1, h2, h3, .serif {
 a { color: var(--link); text-decoration-color: rgba(28, 79, 156, 0.32); text-underline-offset: 2px; }
 a:hover { text-decoration-color: currentColor; }
 
-/* References are identifiers: tabular figures, underline on hover only. */
 td a, .sub a {
   font-variant-numeric: tabular-nums;
   text-decoration: none;
@@ -110,10 +100,6 @@ a.button {
   border: 1px solid var(--line); border-radius: 5px; background: var(--panel); color: var(--ink);
 }
 
-/* --- The custody timeline ------------------------------------------------
-   The link between rows is drawn as a line, so a break renders as a severed
-   line at the exact point it occurs. */
-
 .timeline { list-style: none; margin: 0; padding: 0; }
 .timeline li { position: relative; padding: 0 0 6px 34px; }
 .timeline li::before {
@@ -129,7 +115,6 @@ a.button {
 .timeline li.broken::before { background: var(--altered); }
 .timeline li.broken .knot { border-color: var(--altered); background: var(--altered-bg); }
 
-/* The severed link: a dashed gap with a break notice sitting in it. */
 .timeline li.break-point::before {
   background: repeating-linear-gradient(
     to bottom, var(--altered) 0 4px, transparent 4px 9px
@@ -143,9 +128,6 @@ a.button {
 .event-head { font-weight: 600; }
 .event-meta { color: var(--muted); font-size: 13px; }
 .event-note { font-size: 13.5px; margin-top: 2px; }
-
-/* --- The chunk map -------------------------------------------------------
-   One block per chunk, green for matching and red for altered. */
 
 .chunkmap { display: flex; flex-wrap: wrap; gap: 5px; margin: 10px 0 8px; }
 .chunk {
@@ -168,9 +150,6 @@ a.button {
 .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .spacer { height: 10px; }
 
-
-/* --- The summary strip --------------------------------------------------- */
-
 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
 .stat {
   background: var(--panel); border: 1px solid var(--line); border-radius: 6px;
@@ -187,9 +166,6 @@ a.button {
 .stat .n.bad { color: var(--altered); }
 .stat .k { color: var(--muted); font-size: 12.5px; margin-top: 5px; }
 
-/* --- The integrity banner ------------------------------------------------
-   The item's standing as at the last check. */
-
 .banner {
   display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
   border-radius: 6px; padding: 13px 17px; margin-bottom: 18px;
@@ -203,18 +179,12 @@ a.button {
 .banner.warn    { background: var(--warn-bg);    border-color: #ecd9a4; color: var(--warn); }
 .banner.unknown { background: #f0f0ec; border-color: var(--line); color: var(--muted); }
 
-/* Capitalised in presentation only, so the rendered text and the API value
-   remain the same string. */
 .event-head::first-letter { text-transform: uppercase; }
 
 footer.provenance {
   margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--line);
   color: var(--muted); font-size: 12.5px;
 }
-
-/* ==========================================================================
-   Motion
-   ========================================================================== */
 
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(6px); }
@@ -226,19 +196,16 @@ footer.provenance {
   to   { opacity: 1; }
 }
 
-/* Used with a per block delay, so the map builds in file order. */
 @keyframes chunk-in {
   from { opacity: 0; transform: scale(0.82); }
   to   { opacity: 1; transform: none; }
 }
 
-/* Runs twice after the map has built, then stops. */
 @keyframes chunk-alarm {
   0%   { box-shadow: 0 0 0 0 rgba(180, 35, 24, 0.55); }
   100% { box-shadow: 0 0 0 14px rgba(180, 35, 24, 0); }
 }
 
-/* Skeleton sweep. */
 @keyframes shimmer {
   from { background-position: -200% 0; }
   to   { background-position: 200% 0; }
@@ -246,10 +213,6 @@ footer.provenance {
 
 .fade-up { animation: fade-up var(--base) var(--ease) both; }
 .fade-in { animation: fade-in var(--base) var(--ease) both; }
-
-/* --- Skeletons ----------------------------------------------------------
-   Laid out to the shape of the content they replace, so nothing shifts when
-   the real content lands. */
 
 .sk {
   border-radius: 4px;
@@ -271,13 +234,10 @@ footer.provenance {
 .sk-chunk { width: 46px; height: 46px; border-radius: 4px; }
 .sk-row { display: flex; gap: 12px; align-items: center; }
 
-/* Announced to assistive technology instead of the empty blocks. */
 .sk-label {
   position: absolute; width: 1px; height: 1px; overflow: hidden;
   clip: rect(0 0 0 0); white-space: nowrap;
 }
-
-/* --- Micro interactions -------------------------------------------------- */
 
 a { transition: color var(--fast) var(--ease); }
 
@@ -295,7 +255,6 @@ button.action:active:not(:disabled) { transform: translateY(1px); }
 a.button:hover { background: #fdfdfb; box-shadow: 0 1px 6px rgba(22, 22, 15, 0.09); }
 a.button:active { transform: translateY(1px); }
 
-/* Progress is shown on the control that was activated. */
 button.action.running {
   position: relative;
   overflow: hidden;
@@ -311,23 +270,15 @@ button.action.running::after {
   to   { transform: translateX(350%); }
 }
 
-/* --- The custody timeline ------------------------------------------------
-   Rows settle top to bottom, in the order the chain was written. */
-
 .timeline li { animation: fade-up var(--base) var(--ease) both; }
 .timeline li .knot { transition: border-color var(--base) var(--ease), background-color var(--base) var(--ease); }
 
 .break-notice { animation: fade-up var(--slow) var(--ease) both; }
 
-/* --- The chunk map ------------------------------------------------------- */
-
 .chunk { animation: chunk-in var(--base) var(--ease) both; }
 .chunk.altered { animation: chunk-in var(--base) var(--ease) both, chunk-alarm 900ms var(--ease) 420ms 2; }
 
 .result-line { animation: fade-up var(--base) var(--ease) both; }
-
-/* --- Reduced motion ------------------------------------------------------
-   Shimmer becomes a flat tint; everything else appears at once. */
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

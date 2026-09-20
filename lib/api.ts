@@ -2,7 +2,6 @@ import type { Forum, CustodyAction } from "@/types/api";
 
 export const API_BASE = process.env.API_BASE ?? "http://localhost:4000";
 
-/** Thrown when the API reports that a record does not exist. */
 export class NotFoundError extends Error {
   readonly notFound = true;
 }
@@ -57,7 +56,6 @@ export function formatSize(bytes: number | string): string {
 
 export const formatNumber = (n: number): string => Number(n).toLocaleString("en-GB");
 
-/** Gap between the device clock and the server clock, when material. */
 export function offlineGap(deviceTime: string, serverTime: string | null): string | null {
   if (!serverTime) return null;
   const ms = new Date(serverTime).getTime() - new Date(deviceTime).getTime();

@@ -66,10 +66,6 @@ export function FactsSkeleton({ rows = 6 }: { rows?: number }) {
   );
 }
 
-/**
- * Placeholder for a verification in progress, including the chunk row, so the
- * result lands in place rather than displacing content as it is being read.
- */
 export function VerifyResultSkeleton({ chunkCount = 8 }: { chunkCount?: number }) {
   return (
     <Loading label="Recomputing the fingerprint and the custody chain">
