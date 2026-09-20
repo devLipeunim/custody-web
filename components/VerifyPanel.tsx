@@ -158,6 +158,8 @@ export default function VerifyPanel({ itemRef, chunkCount, chunkSizeBytes, fileS
               Yes. The sequence breaks at entry {(state.data.chainBreakAtSeq ?? 0) + 1}
               {state.data.chainBreakReason === "content_modified"
                 ? ", whose contents no longer match the record made when it was written."
+                : state.data.chainBreakReason === "fingerprint_contradicted"
+                ? ", which records a different fingerprint for this exhibit than the one now held against it."
                 : ", which does not follow from the entry before it."}
             </p>
           )}

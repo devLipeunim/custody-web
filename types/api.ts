@@ -12,7 +12,12 @@ export type CustodyAction =
 
 export type FileIntegrity = "intact" | "altered" | "awaiting_file" | "missing";
 export type ChainIntegrity = "intact" | "broken";
-export type ChainBreakReason = "link_mismatch" | "content_modified" | "item_deleted" | null;
+export type ChainBreakReason =
+  | "link_mismatch"
+  | "content_modified"
+  | "fingerprint_contradicted"
+  | "item_deleted"
+  | null;
 
 export interface CaseSummary {
   id: string;

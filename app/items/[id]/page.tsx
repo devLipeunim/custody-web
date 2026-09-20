@@ -10,12 +10,20 @@ export const dynamic = "force-dynamic";
 
 function IntegrityBanner({ item, chain }: { item: ItemDetail; chain: ChainResponse }) {
   if (chain.chainIntegrity === "broken") {
+    const entry = (chain.chainBreakAtSeq ?? 0) + 1;
+    const contradicted = chain.chainBreakReason === "fingerprint_contradicted";
     return (
       <div className="banner altered">
-        <span className="headline">The handling record has been edited.</span>
+        <span className="headline">
+          {contradicted
+            ? "The fingerprint held against this exhibit has been changed."
+            : "The handling record has been edited."}
+        </span>
         <span className="detail">
-          The chain breaks at entry {(chain.chainBreakAtSeq ?? 0) + 1}. Everything above it
-          remains verified.
+          {contradicted
+            ? `Entry ${entry} records a different fingerprint from the one now stored against this
+               exhibit, which means the stored fingerprint was changed after collection.`
+            : `The chain breaks at entry ${entry}. Everything above it remains verified.`}
         </span>
       </div>
     );
@@ -145,9 +153,20 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ id:
       <div className="panel">
         {chain.chainIntegrity === "broken" && (
           <div className="break-notice">
-            <strong>This record has been edited.</strong> Each entry is locked to the one before
-            it, and that lock fails at entry {(chain.chainBreakAtSeq ?? 0) + 1}. Everything above
-            the break remains verified. Nothing below it can be relied upon.
+            {chain.chainBreakReason === "fingerprint_contradicted" ? (
+              <>
+                <strong>The stored fingerprint has been changed.</strong> Entry{" "}
+                {(chain.chainBreakAtSeq ?? 0) + 1} records the fingerprint this exhibit carried
+                when it was written, and it is not the one now held against the exhibit. The
+                entries themselves are unedited.
+              </>
+            ) : (
+              <>
+                <strong>This record has been edited.</strong> Each entry is locked to the one
+                before it, and that lock fails at entry {(chain.chainBreakAtSeq ?? 0) + 1}.
+                Everything above the break remains verified. Nothing below it can be relied upon.
+              </>
+            )}
           </div>
         )}
         <ul className="timeline">
