@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
-  api, formatPlain, formatSize, formatNumber, plainAction, offlineGap, NotFoundError,
+  api, formatPlain, formatSize, formatNumber, plainAction, offlineGap, isAudio, NotFoundError,
 } from "@/lib/api";
 import VerifyPanel from "@/components/VerifyPanel";
 import type { ChainResponse, ItemDetail } from "@/types/api";
@@ -104,10 +104,16 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ id:
 
       <div className="panel">
         <dl className="kv">
-          <dt>File</dt>
+          <dt>{isAudio(item.mime_type, item.file_name) ? "Recording" : "File"}</dt>
           <dd>
             {item.file_name} · {formatSize(item.file_size_bytes)}
             {item.file_size_bytes >= 1024 && ` (${formatNumber(item.file_size_bytes)} bytes)`}
+            {isAudio(item.mime_type, item.file_name) && (
+              <div className="event-meta">
+                Audio captured at the scene. The recording stays on the collecting device until it
+                is deposited, so only its fingerprint is held here.
+              </div>
+            )}
           </dd>
           <dt>Fingerprinted as</dt>
           <dd>

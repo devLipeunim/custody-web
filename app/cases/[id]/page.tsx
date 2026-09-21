@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { api, FORUM_LABELS, formatPlain, formatSize, NotFoundError } from "@/lib/api";
+import { api, FORUM_LABELS, formatPlain, formatSize, isAudio, NotFoundError } from "@/lib/api";
 import CaseChainCheck from "@/components/CaseChainCheck";
 import type { CaseDetail, CaseItemRow } from "@/types/api";
 
@@ -55,7 +55,12 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ id:
                 <td className="num"><Link href={`/items/${i.reference}`}>{i.reference}</Link></td>
                 <td>
                   {i.description}
-                  <div className="event-meta">{i.file_name} · {i.collector_name}</div>
+                  <div className="event-meta">
+                    {isAudio(i.mime_type, i.file_name) && (
+                      <span className="badge unknown media">Audio</span>
+                    )}
+                    {i.file_name} · {i.collector_name}
+                  </div>
                 </td>
                 <td className="num">
                   {formatSize(i.file_size_bytes)}

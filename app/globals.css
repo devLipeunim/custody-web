@@ -86,6 +86,10 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
 .badge.intact  { background: var(--intact-bg);  color: var(--intact); }
 .badge.altered { background: var(--altered-bg); color: var(--altered); }
 .badge.unknown { background: #eee; color: var(--muted); }
+.badge.media {
+  font-size: 11px; padding: 1px 7px; margin-right: 6px;
+  letter-spacing: 0.04em; text-transform: uppercase;
+}
 .badge.warn    { background: var(--warn-bg);    color: var(--warn); }
 
 .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; }

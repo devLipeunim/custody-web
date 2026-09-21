@@ -22,6 +22,15 @@ export const FORUM_LABELS: Record<Forum, string> = {
   criminal: "Criminal",
 };
 
+const AUDIO_EXTENSIONS = ["m4a", "mp3", "wav", "aac", "ogg", "flac", "wma", "opus", "amr", "caf"];
+
+/** An exhibit recorded at the scene rather than picked from the device. */
+export function isAudio(mimeType: string | null, fileName: string | null): boolean {
+  if (mimeType?.startsWith("audio/")) return true;
+  const ext = fileName?.split(".").pop()?.toLowerCase();
+  return ext ? AUDIO_EXTENSIONS.includes(ext) : false;
+}
+
 const ACTION_LABELS: Record<CustodyAction, string> = {
   collected: "collected from the source device",
   sealed: "fingerprint confirmed by the server",
