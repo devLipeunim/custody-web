@@ -169,7 +169,12 @@ export default function VerifyPanel({ itemRef, chunkCount, chunkSizeBytes, fileS
             <dt>Fingerprint at collection</dt>
             <dd className="mono">{state.data.expectedRootHash}</dd>
             <dt>Fingerprint now</dt>
-            <dd className="mono">{state.data.actualRootHash ?? "file not found"}</dd>
+            <dd className="mono">
+              {state.data.actualRootHash ??
+                (state.data.fileIntegrity === "awaiting_file"
+                  ? "not yet deposited"
+                  : "file not found")}
+            </dd>
             <dt>Verified at</dt>
             <dd>{new Date(state.data.verifiedAt).toLocaleString("en-GB")}</dd>
           </dl>
